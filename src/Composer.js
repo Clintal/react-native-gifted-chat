@@ -12,34 +12,8 @@ export default class Composer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-        text: this.props.text,
-        refresh: false,
+        text: this.props.text
     };
-  }
-/*  shouldComponentUpdate(nextProps,nextState){
-    return !(Platform.OS === 'ios' && this.state.text !== nextState.text);
-  };*/
-
-    shouldComponentUpdate (nextProps, nextState) {
-        // return !(Platform.OS === 'ios' && this.state.value !== nextState.value)
-
-        /*if (Platform.OS === 'ios') {
-            return this.state.text === nextState.text;
-        }*/
-
-        if (this.state.text !== nextState.text) {
-            return false;
-        }
-
-        return true;
-    }
-
-  componentDidUpdate(prevProps) {
-      if (Platform.OS === 'ios'){
-        if (prevProps.text !== this.props.text && this.props.text === '') {
-            this.setState({ text: '', refresh: true }, () => this.setState({ refresh: false }));
-        }
-      }
   }
 
   onContentSizeChange(e) {
@@ -62,49 +36,59 @@ export default class Composer extends React.Component {
     this.props.onTextChanged(text);
   }
 
-    render() {
-    if (Platform.OS === 'ios' && this.state.refresh) {
+  clearText(){
+    // Applied this fix rom this link.
+    // https://github.com/facebook/react-native/issues/18767#issuecomment-403685280
+    // TODO: Update this library as soon they have migrated to RN >= 0.57, and then revert all of this stuff.
 
-        return null;
-      //  this.setState({text: ''});
-    }
+    this._textInput.setNativeProps({ text: ' ' });
 
-    return (
-        <TextInput
-            placeholder={this.props.placeholder}
-            placeholderTextColor={this.props.placeholderTextColor}
-            multiline={this.props.multiline}
-            onChange={(e) => this.onContentSizeChange(e)}
-            onContentSizeChange={(e) => this.onContentSizeChange(e)}
-            onChangeText={(text) => this.onChangeText(text)}
-            style={[styles.textInput, this.props.textInputStyle, { height: this.props.composerHeight }]}
-            autoFocus={this.props.textInputAutoFocus}
-            value={Platform.OS === 'ios' ? this.state.text : this.props.text}
-            accessibilityLabel={this.state.text || this.props.placeholder}
-            enablesReturnKeyAutomatically
-            underlineColorAndroid="transparent"
-            keyboardAppearance={this.props.keyboardAppearance}
-            {...this.props.textInputProps}
-        />
-    );
+    setTimeout(() => {
+      this._textInput.setNativeProps({ text: '' });
+    },5);
   }
 
+  render() {
+    return (
+      <TextInput
+        placeholder={this.props.placeholder}
+        placeholderTextColor={this.props.placeholderTextColor}
+        multiline={this.props.multiline}
+        onChange={(e) => this.onContentSizeChange(e)}
+        onContentSizeChange={(e) => this.onContentSizeChange(e)}
+        onChangeText={(text) => this.onChangeText(text)}
+        style={[styles.textInput, this.props.textInputStyle, { height: this.props.composerHeight }]}
+        autoFocus={this.props.textInputAutoFocus}
+        value={this.props.text}
+        accessibilityLabel={this.state.text || this.props.placeholder}
+        enablesReturnKeyAutomatically
+        underlineColorAndroid="transparent"
+        keyboardAppearance={this.props.keyboardAppearance}
+        blurOnSubmit={false}
+        ref={component => this._textInput = component}
+        onSubmitEditing={() => {
+          this.clearText()
+        }}
+      />
+    );
+  }
 }
 
 const styles = StyleSheet.create({
   textInput: {
-      flex: 1,
-      marginLeft: 10,
-      fontSize: 16,
-      lineHeight: 16,
-      marginTop: Platform.select({
-          ios: 6,
-          android: 0,
-      }),
-      marginBottom: Platform.select({
-          ios: 5,
-          android: 3,
-      }),
+    flex: 1,
+    marginLeft: 50,
+    fontSize: 25,
+    backgroundColor: 'yellow',
+    lineHeight: 16,
+    marginTop: Platform.select({
+        ios: 16,
+        android: 10,
+    }),
+    marginBottom: Platform.select({
+        ios: 5,
+        android: 3,
+    }),
   },
 });
 
