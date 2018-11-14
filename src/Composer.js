@@ -36,18 +36,6 @@ export default class Composer extends React.Component {
     this.props.onTextChanged(text);
   }
 
-  clearText(){
-    // Applied this fix rom this link.
-    // https://github.com/facebook/react-native/issues/18767#issuecomment-403685280
-    // TODO: Update this library as soon they have migrated to RN >= 0.57, and then revert all of this stuff.
-
-    this._textInput.setNativeProps({ text: ' ' });
-
-    setTimeout(() => {
-      this._textInput.setNativeProps({ text: '' });
-    },5);
-  }
-
   render() {
     return (
       <TextInput
@@ -66,9 +54,6 @@ export default class Composer extends React.Component {
         keyboardAppearance={this.props.keyboardAppearance}
         blurOnSubmit={false}
         ref={component => this._textInput = component}
-        onSubmitEditing={() => {
-          this.clearText()
-        }}
       />
     );
   }
