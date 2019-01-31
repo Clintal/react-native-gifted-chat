@@ -22,7 +22,7 @@ export default class Bubble extends React.Component {
       const options =
         this.props.optionTitles.length > 0
           ? this.props.optionTitles.slice(0, 2)
-          : ['Copy Text', 'Cancel'];
+          : ['テキストをコピーする', 'キャンセル'];
       const cancelButtonIndex = options.length - 1;
       this.context.actionSheet().showActionSheetWithOptions(
         {
@@ -273,7 +273,7 @@ Bubble.defaultProps = {
   renderTicks: null,
   renderTime: null,
   position: 'left',
-  optionTitles: ['Copy Text', 'Cancel'],
+  optionTitles: ['テキストをコピーする', 'キャンセル'],
   currentMessage: {
     text: null,
     createdAt: null,
