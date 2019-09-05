@@ -3,8 +3,9 @@ node_modules/
 .expo/
 npm-debug.log
 TODO.md
-
+yarn-error.log
 .idea
 .vscode
 Exponent-*.app
 *.log
+lib/
