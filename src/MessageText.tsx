@@ -128,7 +128,7 @@ export default class MessageText<
   }
 
   onPhonePress = (phone: string) => {
-    const options = ['Call', 'Text', 'Cancel']
+    const options = ['電話', 'メッセージを送る', 'キャンセル']
     const cancelButtonIndex = options.length - 1
     this.context.actionSheet().showActionSheetWithOptions(
       {

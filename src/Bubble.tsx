@@ -95,7 +95,7 @@ const styles = {
   }),
 }
 
-const DEFAULT_OPTION_TITLES = ['Copy Text', 'Cancel']
+const DEFAULT_OPTION_TITLES = ['テキストをコピーする', 'キャンセル']
 
 export type RenderMessageImageProps<TMessage extends IMessage> = Omit<
   BubbleProps<TMessage>,
