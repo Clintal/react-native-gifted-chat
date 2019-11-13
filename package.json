@@ -2,7 +2,7 @@
   "name": "react-native-gifted-chat",
   "version": "0.11.3",
   "description": "The most complete chat UI for React Native",
-  "main": "node_modules/expo/AppEntry.js",
+  "main": "src/index.ts",
   "types": "lib/index.d.ts",
   "repository": {
     "type": "git",
