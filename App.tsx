@@ -1,7 +1,7 @@
 import { AppLoading, Asset, Linking } from 'expo'
 import React, { Component } from 'react'
 import { StyleSheet, View, Text, Platform } from 'react-native'
-import { Bubble, GiftedChat, SystemMessage } from './src/'
+import { Bubble, GiftedChat, SystemMessage, IMessage } from './src'
 
 import AccessoryBar from './example-expo/AccessoryBar'
 import CustomActions from './example-expo/CustomActions'
@@ -37,6 +37,8 @@ export default class App extends Component {
     loadEarlier: true,
     typingText: null,
     isLoadingEarlier: false,
+    appIsReady: false,
+    isTyping: false,
   }
 
   _isMounted = false
@@ -47,6 +49,7 @@ export default class App extends Component {
     this.setState({
       messages: messagesData, // messagesData.filter(message => message.system),
       appIsReady: true,
+      isTyping: false,
     })
   }
 
@@ -55,7 +58,7 @@ export default class App extends Component {
   }
 
   onLoadEarlier = () => {
-    this.setState(previousState => {
+    this.setState(() => {
       return {
         isLoadingEarlier: true,
       }
@@ -63,11 +66,11 @@ export default class App extends Component {
 
     setTimeout(() => {
       if (this._isMounted === true) {
-        this.setState(previousState => {
+        this.setState((previousState: any) => {
           return {
             messages: GiftedChat.prepend(
               previousState.messages,
-              earlierMessages,
+              earlierMessages as any,
               Platform.OS !== 'web',
             ),
             loadEarlier: false,
@@ -80,7 +83,7 @@ export default class App extends Component {
 
   onSend = (messages = []) => {
     const step = this.state.step + 1
-    this.setState(previousState => {
+    this.setState((previousState: any) => {
       const sentMessages = [{ ...messages[0], sent: true, received: true }]
       return {
         messages: GiftedChat.append(
@@ -96,22 +99,22 @@ export default class App extends Component {
   }
 
   botSend = (step = 0) => {
-    const newMessage = messagesData
+    const newMessage = (messagesData as IMessage[])
       .reverse()
       // .filter(filterBotMessages)
       .find(findStep(step))
     if (newMessage) {
-      this.setState(previousState => ({
+      this.setState((previousState: any) => ({
         messages: GiftedChat.append(
           previousState.messages,
-          newMessage,
+          [newMessage],
           Platform.OS !== 'web',
         ),
       }))
     }
   }
 
-  parsePatterns = linkStyle => {
+  parsePatterns = (_linkStyle: any) => {
     return [
       {
         pattern: /#(\w+)/,
@@ -125,17 +128,19 @@ export default class App extends Component {
     return <CustomView {...props} />
   }
 
-  onReceive = text => {
-    this.setState(previousState => {
+  onReceive = (text: string) => {
+    this.setState((previousState: any) => {
       return {
         messages: GiftedChat.append(
-          previousState.messages,
-          {
-            _id: Math.round(Math.random() * 1000000),
-            text,
-            createdAt: new Date(),
-            user: otherUser,
-          },
+          previousState.messages as any,
+          [
+            {
+              _id: Math.round(Math.random() * 1000000),
+              text,
+              createdAt: new Date(),
+              user: otherUser,
+            },
+          ],
           Platform.OS !== 'web',
         ),
       }
@@ -153,24 +158,23 @@ export default class App extends Component {
     this.onSend(messagesToUpload)
   }
 
-  renderAccessory = () => <AccessoryBar onSend={this.onSendFromUser} />
+  setIsTyping = () => {
+    this.setState({
+      isTyping: !this.state.isTyping,
+    })
+  }
+
+  renderAccessory = () => (
+    <AccessoryBar onSend={this.onSendFromUser} isTyping={this.setIsTyping} />
+  )
 
   renderCustomActions = props =>
     Platform.OS === 'web' ? null : (
       <CustomActions {...props} onSend={this.onSendFromUser} />
     )
 
-  renderBubble = props => {
-    return (
-      <Bubble
-        {...props}
-        wrapperStyle={{
-          left: {
-            backgroundColor: '#f0f0f0',
-          },
-        }}
-      />
-    )
+  renderBubble = (props: any) => {
+    return <Bubble {...props} />
   }
 
   renderSystemMessage = props => {
@@ -259,6 +263,7 @@ export default class App extends Component {
           renderQuickReplySend={this.renderQuickReplySend}
           inverted={Platform.OS !== 'web'}
           timeTextStyle={{ left: { color: 'red' }, right: { color: 'yellow' } }}
+          isTyping={this.state.isTyping}
         />
       </View>
     )
